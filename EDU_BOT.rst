@@ -39,9 +39,10 @@ Il processo di estrazione consiste nei seguenti step:
 - al termine del processo di estrazione, per ogni pagina web analizzata si avranno le notizie estratte nella seguente struttura di Python:
 
   **Notizia_estratta** = (http://www.ansa.it/canale_scienza_tecnica/notizie/tecnologie/intelligenza-artificiale-scopre-un-super-antibiotico, [intelligenza, artificale, scopre, un, super, antibiotico]) *tupla*
+  
   **Lista_di_notizie** = [Notizia_estratta1, Notizia_estratta2, ...] *lista*
 
-  Si tratta dunque di una lista di tuple. Ogni notizia è racchiusa in una tupla,al cui interno sono contenuti l'url della notizia stessa e le parole chiave, a loro volta sotto forma di lista.
+  Si tratta dunque di una lista di tuple. Ogni notizia è racchiusa in una tupla, al cui interno sono contenuti l'url della notizia stessa e le parole chiave, a loro volta sotto forma di lista.
 
 - Infine, per ogni notizia estratta, vengono confrontate le keywords con una lista di parole chiave di riferimento, legate alle tematiche di interesse principale. Se almeno una keyword di una notizia combacia con una parola inclusa nella lista di parole di riferimento, allora da quella notizia viene presa l'url e selezionata per essere inviata su Telegram
 
@@ -50,11 +51,9 @@ Il processo di estrazione consiste nei seguenti step:
 Librerie
 ------------------
 
-- 'Selenium
-<https://selenium-python.readthedocs.io/>'_
+- Selenium_
 
-- 'BeautifulSoup
-<https://www.crummy.com/software/BeautifulSoup/bs4/doc/>'_
+- BeautifulSoup_
 
 Le due librerie vengono alternate in base alla pagina su cui fare scraping.
 
@@ -66,17 +65,20 @@ L'oggetto Selenium, solitamente chiamato "browser", si appoggia a Chromedriver.e
 
 L'oggetto BeautifulSoup, generalmente chiamato "soup", contiene prende in input "browser" e una url qualunque, estraendone per intero il codice html.
 
+.. _Selenium: https://selenium-python.readthedocs.io/
+.. _BeautifulSoup: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+
 Strategia di estrazione
 ----------
-Non esiste strategia univoca per estrarre notizie e parole chiave da un url. Generalmente, la procedura seguita per lo scraping si può riassiumere così:
+Non esiste strategia univoca per estrarre notizie e parole chiave da un url. Generalmente, la procedura seguita per lo scraping si può sintetizzare così:
 
-- la pagina principale viene aperta tramite l'oggetto Selenium ed il suo codice è completamente estratto nell'oggetto "soup";
+- la pagina principale viene aperta tramite l'oggetto Selenium (variabile "browser") ed il suo codice è completamente estratto nell'oggetto "soup";
 
 - il codice html della pagina viene ispezionato manualmente attraverso Chrome (tasto destro, Ispeziona). Usando il puntatore, l'area selezionata rimanda al codice ad esso collegato. Puntando le notizie principali, si vedrà dunque i tag a cui essi sono collegati, in modo tale da poter selezionare gli elementi ricorrenti e "spezzare" il codice in una lista di notizie, da cui verrà estratto l'url e la data;
 
-- le notizie vengono analizzate una ad una tramite un ciclo for; viene estratta la data e confrontata con quella del giorno corrente, restituendo un booleano;
+- le notizie vengono analizzate una ad una tramite un ciclo iterativo; viene estratta la data e confrontata con quella del giorno corrente, restituendo un booleano sffermativo se la notizia è stata pubblicata nel giorno corrente;
 
-- in caso affermativo, dal codice relativo all'articolo viene estratto l'url e, da essa, le parole chiave, operando sulla stringa. Il tutto viene assembrato sotto forma di tupla, pronto ad essere confrontata con la lista di riferimento.
+- in caso affermativo, dal codice relativo all'articolo viene estratto l'url, e da essa le parole chiave, operando sulla stringa. Il tutto viene assemblato sotto forma di tupla, pronto ad essere confrontata con la lista di riferimento.
 
 
 Telegram
@@ -98,6 +100,6 @@ Ogni parola chiave viene storizzata all'interno di un dataframe Pandas sotto for
 
 Se la notizia viene valutata positivamente dall'utente, il valore numerico associato alle parole chiave di quell'articolo aumenta di uno. Si avrà dunque un contatore di parole chiave presenti negli articoli piaciuti.
 
-Sulla base di questo dataframe, nel momento in cui una notizia è pronta ad essere inviata su Telegram, verrà effettuata una regressione, tramite modello SVR, che permetterà di stabilire un indice di gradimento atteso riguardo a tale notizia.
+Sulla base di questo dataframe, nel momento in cui una notizia è pronta ad essere inviata su Telegram, verrà effettuata una classificazione, tramite modello SVM, che permetterà di stabilire un indice di gradimento atteso riguardo a tale notizia.
 
-La regressione avrà come variabili di input il valore numerico legato alle parole
+La classificazione avrà come variabili di input il valore numerico legato alle parole
