@@ -1,14 +1,8 @@
-from utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+from src.utils import start_extraction, wait, scroll, get_soup, scanning_keywords
 from datetime import date
+import configparser
 
-path_to_chromedriver = "/home/francesco/Downloads/chromedriver"
 url = "https://www.repubblica.it"
-LA_LISTA = ['ai', 'artificial' ,'tecnologia', 'educazione' , 'education',
-            'scuola', 'gw', 'warming', 'global', 'warming',
-            'digital', 'digitale', 'circolarità', 'sostenibilità', 'sostenibile',
-             'edu' , 'energy' , 'energia' , 'rinnovabili', 'coronavirus',
-             'corona', 'virus', 'messi']
-
 
 def extract_keywords(browser, soup):
     try:
@@ -54,6 +48,10 @@ def avoid_duplicates(news):
 
 
 def larepubblica_main():
+    config = configparser.ConfigParser()
+    config.read('config/config.cfg')
+    path_to_chromedriver = config['WebScraping']['WebBrowser']
+    LA_LISTA = config['WebScraping']['LA_LISTA']
     browser, soup = start_extraction(path_to_chromedriver, url)
     news = get_news(soup)
     browser.close()

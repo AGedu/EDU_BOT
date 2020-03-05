@@ -1,5 +1,5 @@
 from datetime import date
-from utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+from src.utils import start_extraction, wait, scroll, get_soup, scanning_keywords
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.keys import Keys
@@ -8,14 +8,9 @@ import json
 import datetime
 from datetime import date
 import time
+import configparser
 
-path_to_chromedriver = "/home/francesco/Downloads/chromedriver"
 url = "https://www.punto-informatico.it"
-LA_LISTA = ['ai', 'artificial' ,'tecnologia', 'educazione' , 'education',
-            'scuola', 'gw', 'warming', 'global', 'warming',
-            'digital', 'digitale', 'circolarità', 'sostenibilità', 'sostenibile',
-             'edu' , 'energy' , 'energia' , 'rinnovabili', 'coronavirus',
-             'corona', 'virus', 'messi']
 
 def puntoinformatico_get_news(soup):
     news = []
@@ -46,6 +41,10 @@ def puntoinformatico_extract_keywords(browser, soup):
 
 
 def puntoinformatico_main():
+    config = configparser.ConfigParser()
+    config.read('config/config.cfg')
+    path_to_chromedriver = config['WebScraping']['WebBrowser']
+    LA_LISTA = config['WebScraping']['LA_LISTA']
     browser, soup = start_extraction(path_to_chromedriver, url)
     news = puntoinformatico_get_news(soup)
     browser.close()

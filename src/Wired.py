@@ -2,15 +2,10 @@ import datetime
 from datetime import date
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+from src.utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+import configparser
 
-path_to_chromedriver = "/home/francesco/Downloads/chromedriver"
 url = "https://www.wired.it/"
-LA_LISTA = ['ai', 'artificial' ,'tecnologia', 'educazione' , 'education',
-            'scuola', 'gw', 'warming', 'global', 'warming',
-            'digital', 'digitale', 'circolarità', 'sostenibilità', 'sostenibile',
-             'edu' , 'energy' , 'energia' , 'rinnovabili', 'coronavirus',
-             'corona', 'virus', 'messi', '2020']
 
 def check_date_wired(url):
     try:
@@ -21,13 +16,11 @@ def check_date_wired(url):
     except:
         return None
 
-def scraping():
-    #Connessione al sito e tiro giù il codice della pagina
-    global path_to_chromedriver, url
+def scraping(path_to_chromedriver, LA_LISTA):
+    global url
     driver, soup = start_extraction(path_to_chromedriver, url)
     articles = []
 
-    #Estrazione elementi
     for elem in soup.find_all("h3", class_="article-title"):
         url = ""
 
@@ -61,7 +54,11 @@ def scraping():
     return articles
 
 def wired_main():
-    articles = scraping()
+    config = configparser.ConfigParser()
+    config.read('config/config.cfg')
+    path_to_chromedriver = config['WebScraping']['WebBrowser']
+    LA_LISTA = config['WebScraping']['LA_LISTA']
+    articles = scraping(path_to_chromedriver, LA_LISTA)
     print(articles)
     return articles
     

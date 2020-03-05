@@ -2,24 +2,19 @@ import datetime
 from datetime import date
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+from src.utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+import configparser
+import configparser
 
-path_to_chromedriver = "/home/francesco/Downloads/chromedriver"
 url = "https://www.tomshw.it/"
-LA_LISTA = ['ai', 'artificial' ,'tecnologia', 'educazione' , 'education',
-            'scuola', 'gw', 'warming', 'global', 'warming',
-            'digital', 'digitale', 'circolarità', 'sostenibilità', 'sostenibile',
-             'edu' , 'energy' , 'energia' , 'rinnovabili', 'coronavirus',
-             'corona', 'virus', 'messi', '2020']
 
-def scraping():
-    #Connessione al sito e tiro giù il codice della pagina
-    global path_to_chromedriver, url
+
+def scraping(path_to_chromedriver, LA_LISTA):
+    global url
     driver, soup = start_extraction(path_to_chromedriver, url)
     row = 0
     articles = []
 
-    #Estrazione elementi
     for elem in soup.find_all("div", class_="item_short_desc"):
         today = date.today()
 
@@ -36,12 +31,15 @@ def scraping():
             if scanning_keywords(LA_LISTA, keywords):
                 articles.append((elem.h3.a["href"], keywords))
 
-    #Chiusura finestra chrome
     driver.close()
     return articles
 
 def tomshw_main():
-    articles = scraping()
+    config = configparser.ConfigParser()
+    config.read('config/config.cfg')
+    path_to_chromedriver = config['WebScraping']['WebBrowser']
+    LA_LISTA = config['WebScraping']['LA_LISTA']
+    articles = scraping(path_to_chromedriver, LA_LISTA)
     print(articles)
     return articles
 

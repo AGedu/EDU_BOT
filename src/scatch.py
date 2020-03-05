@@ -4,8 +4,10 @@ from LaRepubblica import larepubblica_main
 from PuntoInformatico import puntoinformatico_main
 from TomsHardware import tomshw_main
 from Wired import wired_main
+import configparser
 
 def main():
+    config = configparser.ConfigParser()
     larepubblica = larepubblica_main()
     focus = focus_main()
     wired= wired_main()

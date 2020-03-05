@@ -2,19 +2,14 @@ import datetime
 from datetime import date
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+from src.utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+import configparser
 
-path_to_chromedriver = "/home/francesco/Downloads/chromedriver"
 url = "https://www.focus.it/"
-LA_LISTA = ['ai', 'artificial' ,'tecnologia', 'educazione' , 'education',
-            'scuola', 'gw', 'warming', 'global', 'warming',
-            'digital', 'digitale', 'circolarità', 'sostenibilità', 'sostenibile',
-             'edu' , 'energy' , 'energia' , 'rinnovabili', 'coronavirus',
-             'corona', 'virus', 'messi']
 
-def check_date_focus(url):
-    global path_to_chromedriver
-    driver, article_soup = start_extraction(path_to_chromedriver,url)
+
+def check_date_focus(path_to_chromedriver, url):
+    driver, article_soup = start_extraction(path_to_chromedriver, url)
     data = article_soup.find("div", class_="AFirma")
     stringa = str(data.text).strip()
     driver.close()
@@ -40,9 +35,8 @@ def check_date_focus(url):
 
     return stringa_data
 
-def scraping():
-    #Connessione al sito e tiro giù il codice della pagina
-    global path_to_chromedriver, url
+def scraping(path_to_chromedriver, LA_LISTA):
+    global url
     driver, soup = start_extraction(path_to_chromedriver, url)
     articles = []
 
@@ -50,10 +44,8 @@ def scraping():
 
         elem_url_link = str(elem.get_attribute("href"))
         today = date.today()
-        if today.strftime("%Y-%m-%d") == check_date_focus(elem_url_link):
-            #Prende i caratteri dopo l'ultimo "/"
+        if today.strftime("%Y-%m-%d") == check_date_focus(path_to_chromedriver, elem_url_link):
             only_keywords = elem_url_link[elem_url_link.rindex("/")+1:]
-            #Split delle parole e inserite in una lista
             lista_parole = only_keywords.split("-")
             print(lista_parole)
 
@@ -64,21 +56,23 @@ def scraping():
 
         elem_url_link = str(elem.get_attribute("href"))
         today = date.today()
-        if today.strftime("%Y-%m-%d") == check_date_focus(elem_url_link):
-            #Prende i caratteri dopo l'ultimo "/"
+        if today.strftime("%Y-%m-%d") == check_date_focus(path_to_chromedriver, elem_url_link):
             only_keywords = elem_url_link[elem_url_link.rindex("/")+1:]
-            #Split delle parole e inserite in una lista
             lista_parole = only_keywords.split("-")
             print(lista_parole)
 
             if scanning_keywords(LA_LISTA, lista_parole):
                 articles.append((elem_url_link, lista_parole))
-    return articles
-    #Chiusura finestra chrome
     driver.close()
+    return articles
+
 
 def focus_main():
-    articles = scraping()
+    config = configparser.ConfigParser()
+    config.read('config/config.cfg')
+    path_to_chromedriver = config['WebScraping']['WebBrowser']
+    LA_LISTA = config['WebScraping']['LA_LISTA']
+    articles = scraping(path_to_chromedriver, LA_LISTA)
     print(articles)
     return articles
 
