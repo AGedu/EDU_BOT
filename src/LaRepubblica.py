@@ -51,7 +51,7 @@ def larepubblica_main():
     config = configparser.ConfigParser()
     config.read('config/config.cfg')
     path_to_chromedriver = config['WebScraping']['WebBrowser']
-    LA_LISTA = config['WebScraping']['LA_LISTA']
+    LA_LISTA = config['WebScraping']['LA_LISTA'].split("\n")
     browser, soup = start_extraction(path_to_chromedriver, url)
     news = get_news(soup)
     browser.close()
@@ -60,7 +60,8 @@ def larepubblica_main():
         browser, soup = start_extraction(path_to_chromedriver, n)
         if check_day_of_publication(soup):
             keywords = extract_keywords(browser, soup)
-            if scanning_keywords(LA_LISTA,keywords):
+            print(keywords)
+            if scanning_keywords(LA_LISTA, keywords):
                 articles.append((n, keywords))
         browser.close()
     print(articles)

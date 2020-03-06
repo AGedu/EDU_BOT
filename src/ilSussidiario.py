@@ -1,5 +1,5 @@
 from datetime import date
-from utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+from src.utils import start_extraction, wait, scroll, get_soup, scanning_keywords
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.keys import Keys
@@ -8,14 +8,10 @@ import json
 import datetime
 from datetime import date
 import time
+import configparser
 
-path_to_chromedriver = "/home/francesco/Downloads/chromedriver"
 url = "https://www.ilsussidiario.net"
-LA_LISTA = ['ai', 'artificial' ,'tecnologia', 'educazione' , 'education',
-            'scuola', 'gw', 'warming', 'global', 'warming',
-            'digital', 'digitale', 'circolarità', 'sostenibilità', 'sostenibile',
-             'edu' , 'energy' , 'energia' , 'rinnovabili', 'coronavirus',
-             'corona', 'virus', 'messi']
+
 
 def ilsussidiario_extract_keywords(url):
     step1 = url.lstrip('https://www.ilsussidiario.net/news/')
@@ -31,6 +27,10 @@ def ilsussidiario_check_day(url):
     return art_date == today.strftime("%d.%m.%Y")
 
 def main():
+    config = configparser.ConfigParser()
+    config.read('config/config.cfg')
+    path_to_chromedriver = config['WebScraping']['WebBrowser']
+    LA_LISTA = config['WebScraping']['LA_LISTA'].split("\n")
     browser, soup = start_extraction(path_to_chromedriver, url)
     articles = []
     main_news = soup.find('div', class_='column flex article-content')
@@ -46,12 +46,12 @@ def main():
             print('Notizia primaria non trovata')
 
 
-    sec_news = soup.find('div', {"id":"home-page-section-4"}).find_all('div',class_='container flexbox column flex')
+    sec_news = soup.find('div', {"id":"home-page-section-4"}).find_all('div', class_='container flexbox column flex')
     print(sec_news)
     for n in sec_news:
         if ilsussidiario_check_day(n):
             try:
-                url_sec = n.find('h3',class_="title flex").find('a').get('href')
+                url_sec = n.find('h3', class_="title flex").find('a').get('href')
                 k2 = ilsussidiario_extract_keywords(url_sec)
                 if scanning_keywords(k2, LA_LISTA):
                     print(k2)

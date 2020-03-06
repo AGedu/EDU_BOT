@@ -29,4 +29,10 @@ def start_extraction(driver,url):
     return browser, soup
 
 def scanning_keywords(magic_list, keywords):
+    # print(type(magic_list))
+    # print(type(keywords))
+    # print(magic_list)
+    # print(set(magic_list))
+    # print(set(keywords))
+    # print(list(set(magic_list) & set(keywords)))
     return list(set(magic_list) & set(keywords)) != []

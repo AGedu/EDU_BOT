@@ -44,7 +44,7 @@ def puntoinformatico_main():
     config = configparser.ConfigParser()
     config.read('config/config.cfg')
     path_to_chromedriver = config['WebScraping']['WebBrowser']
-    LA_LISTA = config['WebScraping']['LA_LISTA']
+    LA_LISTA = config['WebScraping']['LA_LISTA'].split("\n")
     browser, soup = start_extraction(path_to_chromedriver, url)
     news = puntoinformatico_get_news(soup)
     browser.close()

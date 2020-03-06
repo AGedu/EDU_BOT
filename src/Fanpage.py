@@ -2,7 +2,7 @@ import datetime
 from datetime import date
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from utils import start_extraction, wait, scroll, get_soup, scanning_keywords
+from src.utils import start_extraction, wait, scroll, get_soup, scanning_keywords
 import configparser
 
 url = "https://www.fanpage.it/"
@@ -30,7 +30,7 @@ def scraping(path_to_chromedriver, LA_LISTA):
             try:
                 url = elem.a["href"]
             except:
-                continue
+                pass
 
             if check_date_fp(path_to_chromedriver, url):
                 keywords = str(elem.find("a").text.lower().strip()).split(" ")
@@ -45,7 +45,7 @@ def scraping(path_to_chromedriver, LA_LISTA):
             try:
                 url = elem.a["href"]
             except:
-                continue
+                pass
 
             if check_date_fp(path_to_chromedriver, url):
                 keywords = str(elem.find("a").text.lower().strip()).split(" ")
@@ -59,7 +59,7 @@ def fanpage_main():
     config = configparser.ConfigParser()
     config.read('config/config.cfg')
     path_to_chromedriver = config['WebScraping']['WebBrowser']
-    LA_LISTA = config['WebScraping']['LA_LISTA']
+    LA_LISTA = config["WebScraping"]["LA_LISTA"].split("\n")
     articles = scraping(path_to_chromedriver, LA_LISTA)
     print(articles)
     return articles

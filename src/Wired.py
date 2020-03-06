@@ -28,7 +28,7 @@ def scraping(path_to_chromedriver, LA_LISTA):
             url = elem.a["href"]
             print(url)
         except:
-            continue
+            pass
 
         if check_date_wired(url):
             keywords = str(elem.find("a").text.lower().strip()).split(" ")
@@ -43,7 +43,7 @@ def scraping(path_to_chromedriver, LA_LISTA):
             url = elem.a["href"]
             print(url)
         except:
-            continue
+            pass
 
         if check_date_wired(url):
             keywords = str(elem.find("a").text.lower().strip()).split(" ")
@@ -57,7 +57,7 @@ def wired_main():
     config = configparser.ConfigParser()
     config.read('config/config.cfg')
     path_to_chromedriver = config['WebScraping']['WebBrowser']
-    LA_LISTA = config['WebScraping']['LA_LISTA']
+    LA_LISTA = config['WebScraping']['LA_LISTA'].split("\n")
     articles = scraping(path_to_chromedriver, LA_LISTA)
     print(articles)
     return articles
