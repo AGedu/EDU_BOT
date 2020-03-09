@@ -24,15 +24,18 @@ def news(update, context, news):
 def deliver_urls(news, token, id_dest):
     bot = telegram.Bot(token)
     bot = telegram.Bot(token=token)
-    for n in news:
-        bot.sendMessage(chat_id= id_dest, text = n)
+    for i in id_dest:
+        for n in news:
+            bot.sendMessage(chat_id=i, text =n)
 
 
 def main():
     config = configparser.ConfigParser()
     config.read('config/config.cfg')
     token = config['Telegram']['Token']
-    id_dest = config['Telegram']['Id_Destinatari']
+    id_dest1 = config['Telegram']['Id_Destinatario1']
+    id_dest2 = config['Telegram']['Id_Destinatario2']
+    id_dest = [id_dest1, id_dest2]
     larepubblica = larepubblica_main()
     focus = focus_main()
     wired = wired_main()
@@ -41,7 +44,7 @@ def main():
     fanpage = fanpage_main()
     urls = []
     row = 0
-    tot_n_articles = len(larepubblica) + len(focus) + len(wired) + len(tomshw) + len(puntoinformatico)
+    tot_n_articles = len(larepubblica) + len(focus) + len(wired) + len(tomshw) + len(puntoinformatico) + len(fanpage)
     if tot_n_articles < 5:
         treshold_articles = tot_n_articles
     else:
